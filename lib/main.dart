@@ -1,11 +1,14 @@
 import 'package:expense_tracker/Model%20/Transaction.dart';
 import 'package:expense_tracker/transaction_list.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import 'NewTransaction.dart';
 import 'chart.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // setting up the device as always in a portrait mode
+  //SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 
@@ -16,10 +19,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Flutter App ",
-      home: MyHomePage(),
+      home: const MyHomePage(),
       theme: ThemeData(
           // Define the default brightness and colors.
           brightness: Brightness.light,
+          primarySwatch: Colors.purple,
+          accentColor: Colors.green,
           primaryColor: Colors.pinkAccent[800],
           appBarTheme: const AppBarTheme(
               titleTextStyle: TextStyle(
@@ -58,14 +63,20 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  void _addNewTransaction(String txTitle, double txAmount,DateTime date) {
     final newTrx = Transaction(
         id: DateTime.now().toString(),
         title: txTitle,
         amount: txAmount,
-        date: DateTime.now());
+        date: date);
     setState(() {
       _userTransaction.add(newTrx);
+    });
+  }
+  void removeTransaction(int index)
+  {
+    setState(() {
+      _userTransaction.removeAt(index);
     });
   }
 
@@ -79,38 +90,37 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Expense Tracker",
-              style: TextStyle(
-                  fontFamily: 'OpenSans', fontWeight: FontWeight.bold)),
-          actions: [
-            IconButton(
-                onPressed: () => startAddNewTransaction(context),
-                icon: const Icon(
-                  Icons.add,
-                  color: Colors.purple,
-                ))
+    final appbar = AppBar(
+      title: const Text("Expense Tracker",
+          style: TextStyle(
+              fontFamily: 'OpenSans', fontWeight: FontWeight.bold)),
+      actions: [
+        IconButton(
+            onPressed: () => startAddNewTransaction(context),
+            icon: const Icon(
+              Icons.add,
+
+            ))
+      ],
+    );
+    return Scaffold(
+      appBar:appbar,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            const Card(
+              color: Colors.blue,
+              elevation: 5,
+              child: Text("Chart!"),
+            ),
+             Container(height: (MediaQuery.of(context).size.height-MediaQuery.of(context).padding.top-MediaQuery.of(context).padding.bottom-appbar.preferredSize.height)*0.3,child: Chart(_recentTransactions)),
+            Container(height: (MediaQuery.of(context).size.height-MediaQuery.of(context).padding.top-MediaQuery.of(context).padding.bottom-appbar.preferredSize.height)*0.7,child: TransactionList(_userTransaction,removeTransaction))
           ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              const Card(
-                color: Colors.blue,
-                elevation: 5,
-                child: Text("Chart!"),
-              ),
-              Chart(_recentTransactions),
-              TransactionList(_userTransaction)
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => startAddNewTransaction(context),
-          child: Icon(Icons.add),
-        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => startAddNewTransaction(context),
+        child: Icon(Icons.add),
       ),
     );
   }
