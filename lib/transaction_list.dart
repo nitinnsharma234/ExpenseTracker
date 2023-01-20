@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'Model /Transaction.dart';
+import 'TransactionItem.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> userTransaction;
@@ -47,47 +48,7 @@ class TransactionList extends StatelessWidget {
            ],
          ),
            )*/
-                  Card(
-                elevation: 5,
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                child: ListTile(
-                  leading: FittedBox(
-                    child: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '\$${userTransaction[index].amount}',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ),
-                  ),
-                  title: Text(userTransaction[index].title),
-                  subtitle: Text(
-                      DateFormat.yMMMd().format(userTransaction[index].date)),
-                  trailing: MediaQuery.of(context).size.width > 400
-                      ? TextButton.icon(
-                          icon: const Icon(Icons.delete, color: Colors.red,),
-                          onPressed: () {
-                            removeTransaction(index);
-                          },
-                          label: const Text(
-                            "Delete",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        )
-                      : IconButton(
-                          onPressed: () {
-                            removeTransaction(index);
-                          },
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                        ),
-                ),
-              );
+                  TransactionItem(userTransaction: userTransaction[index], removeTransaction: removeTransaction);
             },
             itemCount: userTransaction.length,
           )
@@ -108,3 +69,5 @@ class TransactionList extends StatelessWidget {
           });
   }
 }
+
+

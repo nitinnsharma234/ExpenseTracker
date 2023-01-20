@@ -80,9 +80,9 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void removeTransaction(int index) {
+  void removeTransaction(String id) {
     setState(() {
-      _userTransaction.removeAt(index);
+      _userTransaction.removeWhere((element) => element.id==id);
     });
   }
 
